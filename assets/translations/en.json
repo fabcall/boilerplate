@@ -1,0 +1,25 @@
+{
+  "onboarding_meet_barpass": "Meet Barpass",
+  "onboarding_an_app_for_you_to_save_for_real": "An app for you to really save when you go out to eat and drink. Discounts are applied at the end of the bill.",
+  "onboarding_barpass_discount": "Barpass discount",
+  "onboarding_discounts_at_your_favorite_establishment": "Discounts at your favorite establishment, bars, restaurants, hamburgers, temaki shops and much more.",
+  "onboarding_pay_your_bill_with_barpass": "Pay your bill with Barpass",
+  "onboarding_read_the_qr_code_and_pay_your_bill": "Ask for the bill, enter the amount in the app, read the QR Code that the establishment has and that's it",
+
+  "landing_sign_in": "Sign in",
+  "landing_sign_up": "Sign up",
+  "landing_enter_as_a_guest": "Enter as a guest",
+
+  "login_enter_your_credentials": "Enter your credentials",
+  "login_forgot_your_password": "Forgot your password?",
+  "login_sign_in": "Sign in",
+
+  "profile_tab_change_password": "Change password",
+  "profile_tab_payment_methods": "Payment methods",
+  "profile_tab_share_with_a_friend": "Share with a friend",
+  "profile_tab_suggest_establishment": "Suggest establishment",
+  "profile_tab_coupons": "Coupons",
+  "profile_tab_notifications": "Notifications",
+  "profile_tab_help": "Help",
+  "profile_tab_sign_out": "Sign out"
+}
