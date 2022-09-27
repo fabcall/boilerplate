@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,24 +13,24 @@ class PhoneButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 50),
-      child: MaterialButton(
-        color: Colors.green,
-        padding: EdgeInsets.symmetric(
-          vertical: 12,
+    return GestureDetector(
+      onTap: launchDialer,
+      child: CircleAvatar(
+        radius: 20.0,
+        backgroundColor: Colors.green,
+        child: Icon(
+          Ionicons.call,
+          color: Colors.white,
         ),
-        shape: StadiumBorder(),
-        child: Icon(MdiIcons.phone, color: Colors.white),
-        onPressed: launchDialer,
       ),
     );
   }
 
   void launchDialer() async {
     final urlDialer = "tel:$phoneNumber";
-    await canLaunch(urlDialer)
-        ? await launch(urlDialer)
+    final url = Uri.parse(urlDialer);
+    await canLaunchUrl(url)
+        ? await launchUrl(url)
         : throw 'Could not launch $urlDialer';
   }
 }

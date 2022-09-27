@@ -1,5 +1,5 @@
-import 'package:boilerplate/ui/search/search.dart';
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SearchWidget extends StatefulWidget {
@@ -27,36 +27,36 @@ class _SearchWidgetState extends State<SearchWidget> {
     final styleHint = TextStyle(color: Colors.black54);
     final style = widget.text.isEmpty ? styleHint : styleActive;
 
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24.0),
-          borderSide: BorderSide.none,
+    return SizedBox(
+      height: 40.0,
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24.0),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
+          fillColor: Colors.grey.shade200,
+          filled: true,
+          isDense: true,
+          prefixIcon: Icon(Ionicons.search_outline, color: style.color),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(
+                Ionicons.options_outline,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
+          ),
+          hintStyle: style,
+          hintText: widget.hintText,
         ),
-        filled: true,
-        fillColor: Colors.grey.shade200,
-        isDense: true,
-        prefixIcon: Icon(MdiIcons.magnify, color: style.color),
-        suffixIcon: widget.text.isNotEmpty
-            ? GestureDetector(
-                child: Icon(
-                  Icons.close,
-                  color: style.color,
-                ),
-                onTap: () {
-                  controller.clear();
-                  widget.onChanged('');
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-              )
-            : null,
-        hintText: widget.hintText,
-        hintStyle: style,
+        onChanged: widget.onChanged,
+        style: style,
       ),
-      style: style,
-      onChanged: widget.onChanged,
     );
   }
 }

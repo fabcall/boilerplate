@@ -6,6 +6,7 @@ import 'package:boilerplate/ui/landing/landing.dart';
 import 'package:boilerplate/ui/login/login.dart';
 import 'package:boilerplate/ui/password_reset/password_reset.dart';
 import 'package:boilerplate/ui/primary_bottom_tabs/primary_bottom_tabs.dart';
+import 'package:boilerplate/ui/qr/qr.dart';
 import 'package:boilerplate/ui/registration/registration.dart';
 import 'package:boilerplate/ui/share/share.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +68,7 @@ class Routes {
   static const String creditCard = '/credit_card';
   static const String share = '/share';
   static const String indication = '/indication';
+  static const String qrCode = '/qr_code';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -97,6 +99,12 @@ class Routes {
       case indication:
         return _buildModalBottomSheet(
             child: Material(child: IndicationScreen()));
+      case qrCode:
+        return _buildModalBottomSheet(
+          child: Material(
+            child: QrScreen(),
+          ),
+        );
       default:
         return MaterialPageRoute(builder: (context) {
           return HomeScreen();

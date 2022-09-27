@@ -4,6 +4,20 @@ import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+int sumChars(String str) {
+  final charcodes = str.codeUnits;
+  int sum = 0;
+  for (var i = 0; i < charcodes.length; i++) {
+    sum += charcodes[i];
+  }
+  return sum;
+}
+
+Color generateBackgroundColor(String str, List<Color> defaultColors) {
+  final i = sumChars(str) % defaultColors.length;
+  return defaultColors[i];
+}
+
 class CreditCardWidget extends StatefulWidget {
   final String cardHolderName;
   final String cardNumber;

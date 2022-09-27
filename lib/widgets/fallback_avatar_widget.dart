@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class FallBackAvatarWidget extends StatelessWidget {
   final String imageUrl;
@@ -36,7 +35,7 @@ class FallBackAvatarWidget extends StatelessWidget {
             color: Colors.black38,
             fontSize: radius,
           ),
-        ), //Icon(MdiIcons.storefront, color: Colors.grey.shade700),
+        ),
       ),
       placeholder: (context, url) => Container(
         child: Center(child: CircularProgressIndicator()),

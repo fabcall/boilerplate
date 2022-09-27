@@ -23,6 +23,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             fontFamily: FontFamily.comfortaa,
             fontSize: 27.0,
             fontWeight: FontWeight.bold,
+            letterSpacing: -2.0,
           ),
         ),
       ),

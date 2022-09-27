@@ -1,5 +1,7 @@
 import 'package:boilerplate/constants/font_family.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 const _tabs = <String>['Pagamentos', 'Assinatura'];
 
@@ -17,9 +19,12 @@ class _AccountScreenState extends State<AccountScreen>
     super.build(context);
 
     final _tabBar = TabBar(
-      indicatorColor: Colors.orange,
       labelColor: Theme.of(context).colorScheme.primary,
       unselectedLabelColor: Colors.grey,
+      indicator: MaterialIndicator(
+        color: Colors.orange,
+        horizontalPadding: 12.0,
+      ),
       tabs: _tabs.map((String name) => Tab(text: name)).toList(),
     );
     return DefaultTabController(
@@ -46,9 +51,27 @@ class _AccountScreenState extends State<AccountScreen>
                       fontFamily: FontFamily.comfortaa,
                       fontSize: 27.0,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: -2.0,
                     ),
                   ),
-                  bottom: _tabBar,
+                  bottom: PreferredSize(
+                    preferredSize:
+                        Size.fromHeight(_tabBar.preferredSize.height),
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: Colors.grey.shade300, width: 1.0),
+                            ),
+                          ),
+                        ),
+                        _tabBar,
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ];
@@ -59,40 +82,6 @@ class _AccountScreenState extends State<AccountScreen>
               _PaymentsListScreen(),
             ],
           ),
-        ),
-      ),
-    );
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0.0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          centerTitle: false,
-          title: Text(
-            'conta',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onBackground,
-              fontFamily: FontFamily.comfortaa,
-              fontSize: 27.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
-            child: TabBar(
-              labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.orange,
-              tabs: [
-                Tab(text: "Pagamentos"),
-                Tab(text: "Assinatura"),
-              ],
-            ),
-          ),
-        ),
-        body: TabBarView(
-          children: [_PaymentsListScreen(), _PaymentsListScreen()],
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:boilerplate/widgets/bottom_sheet_handle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:social_share/social_share.dart';
 
@@ -54,7 +55,7 @@ class _ShareScreenState extends State<ShareScreen> {
                 ),
                 title: Text('Amigos do WhatsApp'),
                 trailing: Icon(
-                  MdiIcons.chevronRight,
+                  Ionicons.chevron_forward_outline,
                   color: Colors.black,
                 ),
                 onTap: () {
@@ -74,7 +75,7 @@ class _ShareScreenState extends State<ShareScreen> {
                 ),
                 title: Text('Amigos do Facebook'),
                 trailing: Icon(
-                  MdiIcons.chevronRight,
+                  Ionicons.chevron_forward_outline,
                   color: Colors.black,
                 ),
               ),
@@ -91,7 +92,7 @@ class _ShareScreenState extends State<ShareScreen> {
                 ),
                 title: Text('Amigos do Messenger'),
                 trailing: Icon(
-                  MdiIcons.chevronRight,
+                  Ionicons.chevron_forward_outline,
                   color: Colors.black,
                 ),
               ),

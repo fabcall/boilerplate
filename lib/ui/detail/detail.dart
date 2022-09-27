@@ -1,5 +1,7 @@
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/widgets/fallback_avatar_widget.dart';
+import 'package:boilerplate/widgets/phone_button_widget.dart';
+import 'package:boilerplate/widgets/size_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -7,12 +9,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const _tabs = <String>['Sobre', 'Menu', 'Comentários'];
 const _list = [
-  'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
-  'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80'
+  {
+    'url':
+        'https://media-cdn.tripadvisor.com/media/photo-m/1280/1a/b8/44/98/london-stock.jpg',
+    'blurHash': 'LBDt;KwbMys:0#OYx[W;Z\$}?xt\$%',
+  },
+  {
+    'url':
+        'https://media-cdn.tripadvisor.com/media/photo-m/1280/1a/b8/46/6d/london-stock.jpg',
+    'blurHash': 'LBE^_:?GF3R-1Ox]}r-oMxsR9^Rk'
+  }
 ];
 const CameraPosition _kInitialPosition =
     CameraPosition(target: LatLng(-33.852, 151.211), zoom: 11.0);
@@ -26,40 +40,86 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  final CarouselController _controller = CarouselController();
+  Size _footerSize = Size(0, 0);
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final _tabBar = TabBar(
-      indicatorColor: Colors.orange,
       labelColor: Theme.of(context).colorScheme.primary,
       unselectedLabelColor: Colors.grey,
+      indicator: MaterialIndicator(
+        color: Colors.orange,
+        horizontalPadding: 12.0,
+      ),
       tabs: _tabs.map((String name) => Tab(text: name)).toList(),
     );
     return DefaultTabController(
       length: _tabs.length,
       child: Scaffold(
+        bottomSheet: SizeWidget(
+          child: _DetailBottomSheet(),
+          onChange: (Size size) {
+            setState(() {
+              _footerSize = size;
+            });
+          },
+        ),
         extendBodyBehindAppBar: true,
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverOverlapAbsorber(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                sliver: SliverAppBar(
-                  floating: true,
-                  pinned: true,
-                  snap: false,
-                  expandedHeight: 320.0,
-                  forceElevated: innerBoxIsScrolled,
-                  flexibleSpace: FlexibleSpaceBar(
-                    collapseMode: CollapseMode.pin,
-                    background: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _buildCarousel(),
-                        Container(
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: MultiSliver(
+                    pushPinnedChildren: true,
+                    children: [
+                      SliverAppBar(
+                        pinned: true,
+                        elevation: 0.0,
+                        expandedHeight: 200.0,
+                        flexibleSpace: FlexibleSpaceBar(
+                          collapseMode: CollapseMode.pin,
+                          background: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              _buildCarousel(),
+                            ],
+                          ),
+                        ),
+                        leading: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Ionicons.close_outline,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Ionicons.heart_outline,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          color: Colors.white,
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,47 +152,28 @@ class _DetailScreenState extends State<DetailScreen> {
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  bottom: _tabBar,
-                  leading: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          MdiIcons.close,
-                          color: Theme.of(context).primaryColor,
+                      ),
+                      SliverPersistentHeader(
+                        floating: true,
+                        pinned: true,
+                        delegate: _SliverTabBarDelegate(
+                          child: _tabBar,
+                          forceElevated: innerBoxIsScrolled,
                         ),
                       ),
-                    ),
-                  ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          MdiIcons.heart,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+                    ],
+                  )),
             ];
           },
-          body: TabBarView(
-            children: [
-              About(),
-              Menu(),
-              CommentsList(),
-            ],
+          body: Container(
+            padding: EdgeInsets.only(bottom: _footerSize.height),
+            child: TabBarView(
+              children: [
+                About(),
+                Menu(),
+                CommentsList(),
+              ],
+            ),
           ),
         ),
       ),
@@ -160,12 +201,11 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
       items: _list
           .map(
-            (img) => CachedNetworkImage(
+            (image) => CachedNetworkImage(
               fit: BoxFit.cover,
-              imageUrl:
-                  'https://cdn.pixabay.com/photo/2020/04/05/10/34/raven-5005534_1280.jpg',
+              imageUrl: image['url']!,
               placeholder: (context, url) => BlurHash(
-                hash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
+                hash: image['blurHash']!,
               ),
               width: double.infinity,
             ),
@@ -176,34 +216,141 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Widget _buildCarouselPagination() {
     return Positioned(
-      top: 180.0,
-      left: 0,
+      bottom: 0,
       right: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: _list.asMap().entries.map((entry) {
-          return GestureDetector(
-            onTap: () => _controller.animateToPage(entry.key),
-            child: Container(
-              width: 8.0,
-              height: 8.0,
-              margin: EdgeInsets.symmetric(
-                horizontal: 4.0,
-                vertical: 8.0,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 1.0,
-                  color: Colors.white,
-                ),
-                shape: BoxShape.circle,
-                color: (_currentIndex == entry.key
-                    ? Colors.orange
-                    : Colors.transparent),
-              ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        padding: const EdgeInsets.all(6.0),
+        decoration: BoxDecoration(
+          //you can get rid of below line also
+          borderRadius: BorderRadius.circular(10.0),
+          //below line is for rectangular shape
+          shape: BoxShape.rectangle,
+          //you can change opacity with color here(I used black) for rect
+          color: Colors.black.withOpacity(0.5),
+          //I added some shadow, but you can remove boxShadow also.
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 5.0,
+              offset: Offset(5.0, 5.0),
             ),
-          );
-        }).toList(),
+          ],
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "${_currentIndex + 1} / ${_list.length}",
+              style: Theme.of(context).textTheme.caption?.copyWith(
+                    color: Colors.white,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverTabBarDelegate({required this.child, required this.forceElevated});
+
+  final TabBar child;
+  final bool forceElevated;
+
+  @override
+  double get minExtent => child.preferredSize.height;
+  @override
+  double get maxExtent => child.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        AnimatedContainer(
+          // Define how long the animation should take.
+          duration: const Duration(milliseconds: 300),
+          // Provide an optional curve to make the animation feel smoother.
+          curve: Curves.fastOutSlowIn,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(
+                bottom: BorderSide(color: Colors.grey.shade300, width: 1.0)),
+            boxShadow: forceElevated
+                ? [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.7),
+                      blurRadius: 4,
+                      offset: Offset(0, 4), // changes position of shadow
+                    ),
+                  ]
+                : null,
+          ),
+        ),
+        child,
+      ],
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverTabBarDelegate oldDelegate) {
+    if (oldDelegate.forceElevated != forceElevated ||
+        oldDelegate.child != child) {
+      return true;
+    }
+    return false;
+  }
+}
+
+class _DetailBottomSheet extends StatelessWidget {
+  const _DetailBottomSheet({
+    Key? key,
+  }) : super(key: key);
+
+  void launchMap({String lat = "47.6", String long = "-122.3"}) async {
+    final mapSchema = 'geo:$lat,$long';
+    final mapUrl = Uri.parse(mapSchema);
+    if (await canLaunchUrl(mapUrl)) {
+      await launchUrl(mapUrl);
+    } else {
+      throw 'Could not launch $mapSchema';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.25),
+            blurRadius: 6,
+            offset: Offset(0, -6), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          12.0,
+          12.0,
+          12.0,
+          MediaQuery.of(context).padding.bottom + 12.0,
+        ),
+        child: Row(
+          children: [
+            PhoneButtonWidget(phoneNumber: "51996196622"),
+            SizedBox(width: 12.0),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: launchMap,
+                child: Text('Como chegar'),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -217,7 +364,7 @@ class About extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: CustomScrollView(
-        key: PageStorageKey<String>('About'),
+        key: PageStorageKey<String>('Details-About_ScrollView'),
         slivers: [
           SliverOverlapInjector(
               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
@@ -243,13 +390,13 @@ class About extends StatelessWidget {
                     ),
                     _ItemWidget(
                       iconColor: Colors.yellow.shade700,
-                      iconData: MdiIcons.star,
+                      iconData: Ionicons.star,
                       title: '4.9',
                       caption: 'Avaliação',
                     ),
                     _ItemWidget(
                       iconColor: Theme.of(context).colorScheme.primary,
-                      iconData: MdiIcons.mapMarker,
+                      iconData: Ionicons.location,
                       title: '14 Km',
                       caption: 'Distância',
                     )
@@ -262,18 +409,25 @@ class About extends StatelessWidget {
                     'Maecenas eu enim enim. Suspendisse vestibulum purus in ultricies dictum. Mauris ipsum sem, dictum bibendum sed elementum ut, convallis et magna. Curabitur tincidunt, tortor eget pharetra dictum, turpis purus ultricies turpis, ac iaculis dui ut ligula. \nDictum bibendum sed elementum ut, convallis et magna. Curabitur tincidunt, tortor eget pharetra dictum, turpis purus ultricies turpis, ac iaculis dui ut ligula.',
                   ),
                 ),
-                SizedBox(height: 12.0),
-                SizedBox(
-                  width: double.infinity,
-                  height: 300.0,
-                  child: GoogleMap(
-                    initialCameraPosition: _kInitialPosition,
-                    markers: {
-                      Marker(
-                        markerId: MarkerId("marker_1"),
-                        position: _kMapCenter,
-                      )
-                    },
+                SizedBox(height: 24.0),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 300.0,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      child: GoogleMap(
+                        initialCameraPosition: _kInitialPosition,
+                        scrollGesturesEnabled: false,
+                        markers: {
+                          Marker(
+                            markerId: MarkerId("marker_1"),
+                            position: _kMapCenter,
+                          )
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -291,7 +445,7 @@ class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      key: PageStorageKey<String>('Menu'),
+      key: PageStorageKey<String>('Details-Menu_ScrollView'),
       slivers: [
         SliverOverlapInjector(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
@@ -313,7 +467,7 @@ class CommentsList extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: CustomScrollView(
-        key: PageStorageKey<String>('CommentsList'),
+        key: PageStorageKey<String>('Details-CommentsList_ScrollView'),
         slivers: [
           SliverOverlapInjector(
               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
@@ -322,7 +476,7 @@ class CommentsList extends StatelessWidget {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final commentWidget = Column(
+                  return Column(
                     children: [
                       _Comment(
                         userAvatarUrl:
@@ -333,37 +487,34 @@ class CommentsList extends StatelessWidget {
                             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                         createdAt: DateTime.parse("2021-10-10"),
                       ),
-                      if (index != 5)
+                      if (index != 4)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 18.0),
+                          padding: const EdgeInsets.symmetric(vertical: 9.0),
                           child: Divider(),
                         ),
                     ],
                   );
-
-                  if (index < 5) {
-                    return commentWidget;
-                  }
-
-                  return Column(
-                    children: [
-                      commentWidget,
-                      SizedBox(height: 12.0),
-                      TextButton(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('mais comentários'),
-                            Icon(MdiIcons.chevronDown),
-                          ],
-                        ),
-                        onPressed: () {},
-                      ),
-                      SizedBox(height: 12.0),
-                    ],
-                  );
                 },
-                childCount: 6,
+                childCount: 5,
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(18.0),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  TextButton(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('mais comentários'),
+                        Icon(Ionicons.chevron_down_outline),
+                      ],
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ),
           ),
@@ -455,11 +606,13 @@ class _CommentUserDetails extends StatelessWidget {
         ),
         SizedBox(width: 8),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Icon(
-              MdiIcons.star,
+              Ionicons.star,
               color: Colors.yellow.shade700,
             ),
+            SizedBox(width: 4.0),
             Text(
               NumberFormat("###.0#", context.locale.toString())
                   .format(userRating),

@@ -7,7 +7,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:snap_scroll_physics/snap_scroll_physics.dart';
 
 const avatarSize = 96.0;
@@ -40,44 +40,44 @@ class ProfileScreenState extends State<ProfileScreen>
     _settingsList = [
       SettingModel(
         'profile_tab_change_password'.tr(),
-        iconData: MdiIcons.lockOutline,
+        iconData: Ionicons.lock_closed_outline,
         onTap: () {
           Navigator.of(context).pushNamed(Routes.changePassword);
         },
       ),
       SettingModel('profile_tab_payment_methods'.tr(),
-          iconData: MdiIcons.creditCardOutline, onTap: () {
+          iconData: Ionicons.card_outline, onTap: () {
         Navigator.of(context).pushNamed(Routes.creditCard);
       }),
       SettingModel(
         'profile_tab_share_with_a_friend'.tr(),
-        iconData: MdiIcons.accountGroupOutline,
+        iconData: Ionicons.people_outline,
         onTap: () {
           Navigator.of(context).pushNamed(Routes.share);
         },
       ),
       SettingModel(
         'profile_tab_suggest_establishment'.tr(),
-        iconData: MdiIcons.beerOutline,
+        iconData: Ionicons.beer_outline,
         onTap: () {
           Navigator.of(context).pushNamed(Routes.indication);
         },
       ),
       SettingModel(
         'profile_tab_coupons'.tr(),
-        iconData: MdiIcons.tagOutline,
+        iconData: Ionicons.pricetag_outline,
       ),
       SettingModel(
         'profile_tab_notifications'.tr(),
-        iconData: MdiIcons.bellOutline,
+        iconData: Ionicons.notifications_outline,
       ),
       SettingModel(
         'profile_tab_help'.tr(),
-        iconData: MdiIcons.helpCircleOutline,
+        iconData: Ionicons.help_circle_outline,
       ),
       SettingModel(
         'profile_tab_sign_out'.tr(),
-        iconData: MdiIcons.logout,
+        iconData: Ionicons.log_out_outline,
       )
     ];
   }
@@ -134,7 +134,7 @@ class ProfileScreenState extends State<ProfileScreen>
                   ),
                   SizedBox(width: Dimens.dp8.w),
                   Icon(
-                    MdiIcons.chevronRight,
+                    Ionicons.chevron_forward_outline,
                     color: Colors.black,
                   ),
                 ],
@@ -231,7 +231,7 @@ class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            MdiIcons.pencil,
+                            Ionicons.pencil_outline,
                             color: Theme.of(context).colorScheme.onPrimary,
                             size: 16.0,
                           ),

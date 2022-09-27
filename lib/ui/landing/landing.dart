@@ -1,12 +1,11 @@
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:boilerplate/ui/registration/registration.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 class LandingScreen extends StatelessWidget {
   @override
@@ -15,6 +14,19 @@ class LandingScreen extends StatelessWidget {
   }
 
   Widget _buildBody() {
+    final tween = MovieTween()
+      ..tween(
+        "opacity",
+        Tween(begin: 0.0, end: 1.0),
+        duration: Duration(milliseconds: 300),
+      )
+      ..tween(
+        "y",
+        Tween(begin: 10.0, end: 0.0),
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+
     return Builder(
       builder: (context) => Container(
         child: SafeArea(
@@ -27,11 +39,29 @@ class LandingScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildAppLogo(),
-                _buildSignInButton(context),
-                _buildSpacer(),
-                _buildSignUpButton(context),
-                _buildSpacer(),
-                _buildNavigateToHome(context),
+                PlayAnimationBuilder<Movie>(
+                  tween: tween,
+                  delay: Duration(seconds: 2),
+                  duration: tween.duration,
+                  builder: (context, value, _) {
+                    return Opacity(
+                      opacity: value.get('opacity'),
+                      child: Transform.translate(
+                        offset: Offset(0, value.get('y')),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildSignInButton(context),
+                            _buildSpacer(),
+                            _buildSignUpButton(context),
+                            _buildSpacer(),
+                            _buildNavigateToHome(context),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -43,10 +73,19 @@ class LandingScreen extends StatelessWidget {
   Widget _buildAppLogo() {
     return Expanded(
       child: Center(
-        child: SvgPicture.asset(
-          Assets.appLogo,
-          semanticsLabel: 'Barpass',
-          height: 56.0,
+        child: PlayAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          delay: const Duration(seconds: 1),
+          duration: const Duration(seconds: 1),
+          curve: Curves.elasticOut,
+          builder: (context, value, _) => Transform.scale(
+            child: SvgPicture.asset(
+              Assets.appLogo,
+              semanticsLabel: 'Barpass',
+              height: 56.0,
+            ),
+            scale: value,
+          ),
         ),
       ),
     );

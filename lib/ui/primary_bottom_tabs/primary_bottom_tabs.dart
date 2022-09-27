@@ -3,8 +3,10 @@ import 'package:boilerplate/ui/account/account.dart';
 import 'package:boilerplate/ui/favorites/favorites.dart';
 import 'package:boilerplate/ui/home/home.dart';
 import 'package:boilerplate/ui/profile/profile.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/widgets/fab_bottom_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:ionicons/ionicons.dart';
 
 class PrimaryBottomTabs extends StatefulWidget {
   @override
@@ -22,19 +24,6 @@ class _PrimaryBottomTabsState extends State<PrimaryBottomTabs> {
     ProfileScreen(),
   ];
 
-  int _selectedIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _pageController.addListener(() {
-      setState(() {
-        _selectedIndex = _pageController.page!.toInt();
-      });
-    });
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -42,11 +31,7 @@ class _PrimaryBottomTabsState extends State<PrimaryBottomTabs> {
   }
 
   _openNewPage() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (BuildContext context) {
-        return EachView("new Pager");
-      }),
-    );
+    Navigator.of(context).pushNamed(Routes.qrCode);
   }
 
   static const double offset = 24.0;
@@ -56,7 +41,7 @@ class _PrimaryBottomTabsState extends State<PrimaryBottomTabs> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(
-          MdiIcons.qrcodeScan,
+          Ionicons.qr_code,
           color: Colors.white,
         ),
         onPressed: _openNewPage,
@@ -68,108 +53,30 @@ class _PrimaryBottomTabsState extends State<PrimaryBottomTabs> {
       ),
       floatingActionButtonLocation:
           const _CenterDockedFloatingActionButtonLocation(offset),
-      bottomNavigationBar: BottomAppBar(
-        notchMargin: 6,
-        elevation: 20.0,
-        color: Colors.white,
-        shape: CircularRaisedRectangle(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            _buildBottomItem(_selectedIndex, 0, MdiIcons.homeOutline, "Home"),
-            _buildBottomItem(
-                _selectedIndex, 1, MdiIcons.walletOutline, "Conta"),
-            _buildBottomItem(_selectedIndex, -1, null, ""),
-            _buildBottomItem(
-                _selectedIndex, 2, MdiIcons.heartOutline, "Favoritos"),
-            _buildBottomItem(
-                _selectedIndex, 3, MdiIcons.accountOutline, "Perfil"),
-          ],
-        ),
+      bottomNavigationBar: FABBottomAppBar(
+        backgroundColor: Colors.white,
+        color: Colors.grey,
+        height: 64.0,
+        iconGap: 8.0,
+        iconSize: 20.0,
+        notchedShape: CircularRaisedRectangle(),
+        onTabSelected: (index) => _pageController.jumpToPage(index),
+        selectedColor: Colors.black,
+        items: [
+          FABBottomAppBarItem(iconData: Ionicons.home_outline, label: "Home"),
+          FABBottomAppBarItem(
+              iconData: Ionicons.wallet_outline, label: "Conta"),
+          FABBottomAppBarItem(
+              iconData: Ionicons.heart_outline, label: "Favoritos"),
+          FABBottomAppBarItem(
+              iconData: Ionicons.person_outline, label: "Perfil"),
+        ],
       ),
       body: PageView(
         controller: _pageController,
         physics: NeverScrollableScrollPhysics(),
         children: _pages,
       ),
-    );
-  }
-
-  Widget _buildBottomItem(
-    int selectedIndex,
-    int index,
-    IconData? iconData,
-    String title,
-  ) {
-    TextStyle textStyle = TextStyle(fontSize: 12.0, color: Colors.grey);
-    Color iconColor = Colors.grey;
-    double iconSize = 20;
-    EdgeInsetsGeometry padding = EdgeInsets.only(top: 12.0);
-
-    if (selectedIndex == index) {
-      textStyle = TextStyle(
-        fontSize: 12.0,
-        color: Colors.black,
-      );
-      iconColor = Colors.black;
-    }
-    Widget padItem = SizedBox();
-    if (iconData != null) {
-      padItem = Padding(
-        padding: padding,
-        child: Container(
-          color: Colors.white,
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                Icon(
-                  iconData,
-                  color: iconColor,
-                  size: iconSize,
-                ),
-                Padding(
-                  padding: padding,
-                  child: Text(
-                    title,
-                    style: textStyle,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-    Widget item = Expanded(
-      flex: 1,
-      child: GestureDetector(
-        onTap: () {
-          if (index != selectedIndex) {
-            _pageController.jumpToPage(index);
-          }
-        },
-        child: SizedBox(
-          height: 64.0,
-          child: padItem,
-        ),
-      ),
-    );
-
-    return item;
-  }
-}
-
-class EachView extends StatelessWidget {
-  final String _title;
-
-  EachView(this._title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_title)),
-      body: Center(child: Text(_title)),
     );
   }
 }

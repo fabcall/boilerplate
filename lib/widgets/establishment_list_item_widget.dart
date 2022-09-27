@@ -2,6 +2,7 @@ import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/widgets/fallback_avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class EstablishmentListItem extends StatelessWidget {
@@ -125,13 +126,13 @@ class _EstablishmentDescription extends StatelessWidget {
           children: <Widget>[
             _ItemWidget(
               iconColor: Colors.yellow.shade700,
-              iconData: MdiIcons.star,
+              iconData: Ionicons.star,
               title: rating,
             ),
             SizedBox(width: 8.0),
             _ItemWidget(
               iconColor: Theme.of(context).colorScheme.primary,
-              iconData: MdiIcons.mapMarker,
+              iconData: Ionicons.location,
               title: distance,
             ),
             SizedBox(width: 8.0),

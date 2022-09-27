@@ -103,6 +103,11 @@ class _CreditCardListState extends State<CreditCardList> {
             0,
           ),
           child: CreditCardWidget(
+            cardColor: generateBackgroundColor('5502  ****  ****  5759', [
+              Colors.red,
+              Colors.blue,
+              Colors.grey,
+            ]),
             cardHolderName: 'FABIO CALLIARI',
             cardNumber: '5502  ****  ****  5759',
             expiryDate: '',

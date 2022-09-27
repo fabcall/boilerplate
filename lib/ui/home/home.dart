@@ -1,12 +1,15 @@
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/constants/font_family.dart';
 import 'package:boilerplate/models/category/category.dart';
 import 'package:boilerplate/models/establishment/establishment.dart';
 import 'package:boilerplate/ui/detail/detail.dart';
 import 'package:boilerplate/widgets/establishment_list_item_widget.dart';
 import 'package:boilerplate/widgets/search_widget.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -19,6 +22,19 @@ final List<Category> categoriesList = [
   Category(id: 3, name: "Pizzarias"),
   Category(id: 4, name: "Hamburguerias"),
   Category(id: 5, name: "Temakerias"),
+];
+
+const _list = [
+  {
+    'url':
+        'https://media-cdn.tripadvisor.com/media/photo-m/1280/1a/b8/44/98/london-stock.jpg',
+    'blurHash': 'LBDt;KwbMys:0#OYx[W;Z\$}?xt\$%',
+  },
+  {
+    'url':
+        'https://media-cdn.tripadvisor.com/media/photo-m/1280/1a/b8/46/6d/london-stock.jpg',
+    'blurHash': 'LBE^_:?GF3R-1Ox]}r-oMxsR9^Rk'
+  }
 ];
 
 final List<Establishment> establishmentsList = [
@@ -162,35 +178,64 @@ class _HomeScreenState extends State<HomeScreen>
             floating: true,
             centerTitle: false,
             elevation: 0.0,
-            title: SvgPicture.asset(
-              Assets.appLogo,
-              semanticsLabel: 'Barpass',
-              height: 33,
+            title: RichText(
+              text: TextSpan(
+                text: 'b',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontFamily: FontFamily.comfortaa,
+                  fontSize: 27.0,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -2.0,
+                ),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'arpass',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
             ),
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
               child: Container(
-                child: Center(child: CupertinoSearchTextField()),
+                child: Center(
+                  child: SearchWidget(
+                    hintText: 'Buscar estabelecimento',
+                    onChanged: (value) {},
+                    text: '',
+                  ),
+                ),
                 color: Colors.white,
                 height: kToolbarHeight,
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
               ),
             ),
-            actions: [
-              IconButton(
-                icon: Icon(MdiIcons.tuneVertical),
-                onPressed: () {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text("Teste")));
-                },
-              )
-            ],
           ),
           SliverToBoxAdapter(
-              child: Container(
-            height: 250.0,
-            color: Colors.green,
-          )),
+            child: CarouselSlider(
+              options: CarouselOptions(
+                onPageChanged: (index, reason) {
+                  setState(() {});
+                },
+                viewportFraction: 1.0,
+              ),
+              items: _list
+                  .map(
+                    (image) => CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: image['url']!,
+                      placeholder: (context, url) => BlurHash(
+                        hash: image['blurHash']!,
+                      ),
+                      width: double.infinity,
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
           SliverPersistentHeader(
             delegate: EstablishmentCategories(),
             pinned: true,
